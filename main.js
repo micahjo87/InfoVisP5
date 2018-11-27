@@ -18,7 +18,7 @@ function start() {
             name : d.fullname,
             motivation : d.motivation,
             share : +d.share,
-            born : d.born,
+            born : new Date(d.born),
             year : +d.year,
             age : +d.age,
             born_city : d.born_city,
@@ -32,6 +32,13 @@ function start() {
             affiliation_country : d.affiliation_country
         }    
     }, function(error, data) {
-        
+        sortByYear(data);
+        console.log(data);
     });
+
+    function sortByYear(data) {
+        data.sort(function(x, y) {
+            return d3.ascending(x.born, y.born);
+        });
+    }
 }
