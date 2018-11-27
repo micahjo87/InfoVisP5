@@ -13,7 +13,7 @@ function start() {
     // a reference to it for later.
     var graph = document.getElementById('graph');
 
-    d3.csv('colleges.csv', function(d) {
+    d3.csv('nobel_laureates.csv', function(d) {
         return d;
     }, function(error, data) {
 
