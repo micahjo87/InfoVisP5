@@ -17,7 +17,7 @@ function start() {
     width = 1000 - margin.left - margin.right,
     height = 600 - margin.top - margin.bottom;
 
-    var divScatter = d3.select(graph).append("div")    
+    var divScatter = d3.select(container).append("div")    
             .attr("class", "scattertip")           
             .style("opacity", 0);
 
