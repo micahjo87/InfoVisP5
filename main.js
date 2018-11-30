@@ -19,6 +19,7 @@ function start() {
 
     var svg = d3.select(container)
         .append('svg')
+        .attr("id", "scatterSVG")
         .attr("preserveAspectRatio", "xMinYMin meet")
         .attr("viewBox", "0 0 " +(width+ margin.left + margin.right)+ " " +(height+ margin.left + margin.right))
         .attr('transform', `translate(${margin.left}, ${margin.top})`)
