@@ -8,8 +8,283 @@
 	<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-	<h1>P5</h1>
-	<!-- Our graph will be added inside this divider element -->
+	<h1>P5 - Micah Jo  and Alex Chan</h1>
+	<h2>Circle View Statistics</h2>
+	<div class="btn-group">
+	  <button onclick="getCategoryWrap()">Category</button>
+	  <button onclick="getGenderWrap()">Gender</button>
+	  <button onclick="getShareWrap()">Share</button>
+	</div>
 	<div id="graph"></div>
+	<script>
+		var graph = document.getElementById('graph');
+
+	    var width = 1500, height = 500;
+
+	    var svg = d3.select(graph)
+	        .append('svg')
+	        .attr('width', width)
+	        .attr('height', height);
+
+        d3.csv('nobel_laureates.csv', function(d) {
+            return {
+                name : d.fullname,
+                motivation : d.motivation,
+                share : +d.share,
+                born : new Date(d.born),
+                year : +d.year,
+                age : +d.age,
+                born_city : d.born_city,
+                born_country : d.born_country,
+                died : d.died,
+                is_alive : d.is_alive,
+                category : d.category,
+                gender : d.gender,
+                affiliation : d.affiliation,
+                affiliation_city : d.affiliation_city,
+                affiliation_country : d.affiliation_country
+            }    
+        }, function(error, data) {
+            getCategory(data);
+        });
+
+	    function sortByYear(data) {
+	        data.sort(function(x, y) {
+	            return d3.ascending(x.born, y.born);
+	        });
+	    }
+
+	    function getCategoryWrap() {
+	        d3.csv('nobel_laureates.csv', function(d) {
+	            return {
+	                name : d.fullname,
+	                motivation : d.motivation,
+	                share : +d.share,
+	                born : new Date(d.born),
+	                year : +d.year,
+	                age : +d.age,
+	                born_city : d.born_city,
+	                born_country : d.born_country,
+	                died : d.died,
+	                is_alive : d.is_alive,
+	                category : d.category,
+	                gender : d.gender,
+	                affiliation : d.affiliation,
+	                affiliation_city : d.affiliation_city,
+	                affiliation_country : d.affiliation_country
+	            }    
+	        }, function(error, data) {
+	            getCategory(data);
+	        });
+	    }
+
+	    function getGenderWrap() {
+	        d3.csv('nobel_laureates.csv', function(d) {
+	            return {
+	                name : d.fullname,
+	                motivation : d.motivation,
+	                share : +d.share,
+	                born : new Date(d.born),
+	                year : +d.year,
+	                age : +d.age,
+	                born_city : d.born_city,
+	                born_country : d.born_country,
+	                died : d.died,
+	                is_alive : d.is_alive,
+	                category : d.category,
+	                gender : d.gender,
+	                affiliation : d.affiliation,
+	                affiliation_city : d.affiliation_city,
+	                affiliation_country : d.affiliation_country
+	            }    
+	        }, function(error, data) {
+	            getGender(data);
+	        });
+	    }
+
+	    function getShareWrap() {
+	        d3.csv('nobel_laureates.csv', function(d) {
+	            return {
+	                name : d.fullname,
+	                motivation : d.motivation,
+	                share : +d.share,
+	                born : new Date(d.born),
+	                year : +d.year,
+	                age : +d.age,
+	                born_city : d.born_city,
+	                born_country : d.born_country,
+	                died : d.died,
+	                is_alive : d.is_alive,
+	                category : d.category,
+	                gender : d.gender,
+	                affiliation : d.affiliation,
+	                affiliation_city : d.affiliation_city,
+	                affiliation_country : d.affiliation_country
+	            }    
+	        }, function(error, data) {
+	            getShare(data);
+	        });
+	    }
+
+	    function getCategory(d) {
+	        d3.selectAll("svg > *").remove();
+	        var nodeData = [];
+	        var prizesByCategory = d3.nest().key(function(d) {
+	            return d.category;
+	        }).rollup(function(v) {
+	            return v.length;
+	        }).entries(d);
+	        nodeData.push({rad: prizesByCategory[0].values, col: "red", txt: prizesByCategory[0].key});
+	        nodeData.push({rad: prizesByCategory[1].values, col: "pink", txt: prizesByCategory[1].key});
+	        nodeData.push({rad: prizesByCategory[2].values, col: "orange", txt: prizesByCategory[2].key});
+	        nodeData.push({rad: prizesByCategory[3].values, col: "green", txt: prizesByCategory[3].key});
+	        nodeData.push({rad: prizesByCategory[4].values, col: "purple", txt: prizesByCategory[4].key});
+	        nodeData.push({rad: prizesByCategory[5].values, col: "brown", txt: prizesByCategory[5].key});
+
+	        var n = nodeData.length;
+
+	        var force = d3.layout.force()
+	            .gravity(0.05)
+	            .distance(100)
+	            .charge(-200)
+	            .size([width, height]);
+
+	        var nodes = d3.range(n).map(function(i) {
+	          var r = nodeData[i].rad * 0.2,
+	              d = {radius: r, col: nodeData[i].col, txt: nodeData[i].txt};
+	          return d;
+	        });
+
+	          force
+	              .nodes(nodes)
+	              .start();
+
+	          var node = svg.selectAll(".node")
+	              .data(nodes)
+	            .enter().append("g")
+	              .attr("class", "node")
+	              .call(force.drag);
+
+	          node.append("circle")
+	              .style("fill", function(d) {
+	                return d.col;
+	              })
+	              .attr("r", function(d) {
+	                return d.radius;
+	              });
+
+	          node.append("text")
+	              .attr("text-anchor", "middle")
+	              .text(function(d) { return d.txt });
+
+	          force.on("tick", function() {
+	            node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+	          });
+	    }
+
+	    function getGender(d) {
+	        d3.selectAll("svg > *").remove();
+	        var nodeData = [];
+	        var gender = d3.nest().key(function(d) {
+	            return d.gender;
+	        }).rollup(function(v) {
+	            return v.length;
+	        }).entries(d);
+	        nodeData.push({rad: gender[0].values, col: "blue", txt: gender[0].key});
+	        nodeData.push({rad: gender[1].values, col: "pink", txt: gender[1].key});
+	        var n = nodeData.length;
+
+	        var force = d3.layout.force()
+	            .gravity(0.05)
+	            .distance(100)
+	            .charge(-200)
+	            .size([width, height]);
+
+	        var nodes = d3.range(n).map(function(i) {
+	          var r = nodeData[i].rad * 0.2,
+	              d = {radius: r, col: nodeData[i].col, txt: nodeData[i].txt};
+	          return d;
+	        });
+
+	          force
+	              .nodes(nodes)
+	              .start();
+
+	          var node = svg.selectAll(".node")
+	              .data(nodes)
+	            .enter().append("g")
+	              .attr("class", "node")
+	              .call(force.drag);
+
+	          node.append("circle")
+	              .style("fill", function(d) {
+	                return d.col;
+	              })
+	              .attr("r", function(d) {
+	                return d.radius;
+	              });
+
+	          node.append("text")
+	              .attr("text-anchor", "middle")
+	              .text(function(d) { return d.txt });
+
+	          force.on("tick", function() {
+	            node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+	          });
+	    }
+
+	    function getShare(d) {
+	        d3.selectAll("svg > *").remove();
+	        var nodeData = [];
+	        var share = d3.nest().key(function(d) {
+	            return d.share;
+	        }).rollup(function(v) {
+	            return v.length;
+	        }).entries(d);
+	        nodeData.push({rad: share[0].values, col: "green", txt: share[0].key});
+	        nodeData.push({rad: share[1].values, col: "orange", txt: share[1].key});
+	        nodeData.push({rad: share[2].values, col: "red", txt: share[2].key});
+	        nodeData.push({rad: share[3].values, col: "pink", txt: share[3].key});
+	        var n = nodeData.length;
+
+	        var force = d3.layout.force()
+	            .gravity(0.05)
+	            .distance(100)
+	            .charge(-200)
+	            .size([width, height]);
+
+	        var nodes = d3.range(n).map(function(i) {
+	          var r = nodeData[i].rad * 0.2,
+	              d = {radius: r, col: nodeData[i].col, txt: nodeData[i].txt};
+	          return d;
+	        });
+
+	          force
+	              .nodes(nodes)
+	              .start();
+
+	          var node = svg.selectAll(".node")
+	              .data(nodes)
+	            .enter().append("g")
+	              .attr("class", "node")
+	              .call(force.drag);
+
+	          node.append("circle")
+	              .style("fill", function(d) {
+	                return d.col;
+	              })
+	              .attr("r", function(d) {
+	                return d.radius;
+	              });
+
+	          node.append("text")
+	              .attr("text-anchor", "middle")
+	              .text(function(d) { return d.txt });
+
+	          force.on("tick", function() {
+	            node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+	          });
+	    }
+	</script>
 </body>
 </html>
