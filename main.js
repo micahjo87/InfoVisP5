@@ -61,49 +61,6 @@ function start() {
         phys = !phys
     });
 
-    d3.select(container)
-        .append('button')
-        .text('Filter Data')
-        .on('click', function() {
-            update();
-        });
-
-    function update() {
-        svg.selectAll('dot')
-            .filter(function(d){
-                if (chem == true) {
-                    chemfilter = d.category == "chemistry"
-                } else {
-                    chemfilter = d.category == ""
-                }
-                if (econ == true) {
-                    econfilter = d.category == "economics"
-                } else {
-                    econfilter = d.category == ""
-                }
-                if (lit == true) {
-                    litfilter = d.category == "literature"
-                } else {
-                    litfilter = d.category == ""
-                }
-                if (med == true) {
-                    medfilter = d.category == "medicine"
-                } else {
-                    medfilter = d.category == ""
-                }
-                if (peace == true) {
-                    peacefilter = d.category == "peace"
-                } else {
-                    peacefilter = d.category == ""
-                }
-                if (phys == false) {
-                    physfilter = d.category == "physics"
-                } else {
-                    physfilter = d.category == ""
-                }
-                return chemfilter || econfilter || litfilter || medfilter || peacefilter || physfilter;
-            })
-            .style("opacity", 1)
 
     }
     d3.csv('nobel_laureates.csv', function(d) {
