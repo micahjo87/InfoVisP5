@@ -62,7 +62,7 @@ function start() {
     });
 
 
-    }
+    
     d3.csv('nobel_laureates.csv', function(d) {
         d.year = +d.year;
         d.age = +d.age;
