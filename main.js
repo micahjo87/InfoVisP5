@@ -33,36 +33,15 @@ function start() {
         phys = true
 
     d3.select(container).selectAll("input")
-    .data(["Chemistry", "Economics", "Literature", "Medicine", "Peace", "Physics"])
-    .enter()
-    .append('label')
-    .text(function(d) { return d; })
-    .append("input")
-        .attr("checked", true)
-        .attr("type", "checkbox")
-        .attr("id", function(d,i) { return 'a'+i; });
+        .data(["Chemistry", "Economics", "Literature", "Medicine", "Peace", "Physics"])
+        .enter()
+        .append('label')
+        .text(function(d) { return d; })
+        .append("input")
+            .attr("checked", true)
+            .attr("type", "checkbox")
+            .attr("id", function(d,i) { return 'a'+i; });
 
-    d3.select("input[id='a0']").on("click", function () {
-        chem = !chem
-    });
-    d3.select("input[id='a1']").on("click", function () {
-        econ = !econ
-    });
-    d3.select("input[id='a2']").on("click", function () {
-        lit = !lit
-    });
-    d3.select("input[id='a3']").on("click", function () {
-        med = !med
-    });
-    d3.select("input[id='a4']").on("click", function () {
-        peace = !peace
-    });
-    d3.select("input[id='a5']").on("click", function () {
-        phys = !phys
-    });
-
-
-    }
     d3.csv('nobel_laureates.csv', function(d) {
         d.year = +d.year;
         d.age = +d.age;
@@ -80,49 +59,69 @@ function start() {
         .domain([15, 95])
         .range([height, 0])
 
+        d3.select("input[id='a0']").on("change", function () {
+            chem = !chem
+            placeDots();
+        });
+        d3.select("input[id='a1']").on("change", function () {
+            econ = !econ
+            placeDots();
+        });
+        d3.select("input[id='a2']").on("change", function () {
+            lit = !lit
+            placeDots();
+        });
+        d3.select("input[id='a3']").on("change", function () {
+            med = !med
+            placeDots();
+        });
+        d3.select("input[id='a4']").on("change", function () {
+            peace = !peace
+            placeDots();
+        });
+        d3.select("input[id='a5']").on("change", function () {
+            phys = !phys
+            placeDots();
+        });
 
-        // svg.selectAll('dot')
-        //     .data(data)
-        //     .enter().append("circle")
-        //     .attr("class", "dot")
-        //     // .filter(function(d){
-        //     //     return d.category == "economics" || d.category == "chemistry";
-        //     // })
-        //     .attr("r", 3)
-        //     .attr("cy", height + 40)
-        //     .attr("cx", d => xScale(d.year))
-        //     .style("fill", d => colorScale(d.category))
+        placeDots();
 
-        svg.selectAll('dot')
-            .data(data)
-            .enter().append("circle")
-            .attr("class", "dot")
-            .filter(function(d){
-                if (chem == true) {
-                    chemfilter = d.category == "chemistry"
-                }
-                if (econ == true) {
-                    econfilter = d.category == "economics"
-                }
-                if (lit == true) {
-                    litfilter = d.category == "literature"
-                }
-                if (med == true) {
-                    medfilter = d.category == "medicine"
-                }
-                if (peace == true) {
-                    peacefilter = d.category == "peace"
-                }
-                if (phys == true) {
-                    physfilter = d.category == "physics"
-                }
-                return chemfilter || econfilter || litfilter || medfilter || peacefilter || physfilter;
-            })
-            .attr("r", 3)
-            .attr("cy", d => yScale(d.age))
-            .attr("cx", d => xScale(d.year))
-            .style("fill", d => colorScale(d.category))
+        function placeDots() {
 
+            var chemfilter, econfilter, litfilter, medfilter, peacefilter, physfilter;
+
+            svg.selectAll("circle").remove();
+
+            svg.selectAll('dot')
+                .data(data)
+                .enter().append("circle")
+                .attr("class", "dot")
+                .filter(function(d){
+                    if (chem == true) {
+                        chemfilter = d.category == "chemistry"
+                    }
+                    if (econ == true) {
+                        econfilter = d.category == "economics"
+                    }
+                    if (lit == true) {
+                        litfilter = d.category == "literature"
+                    }
+                    if (med == true) {
+                        medfilter = d.category == "medicine"
+                    }
+                    if (peace == true) {
+                        peacefilter = d.category == "peace"
+                    }
+                    if (phys == true) {
+                        physfilter = d.category == "physics"
+                    }
+                    return chemfilter || econfilter || litfilter || medfilter || peacefilter || physfilter;
+                })
+                .attr("r", 3)
+                .attr("cy", d => yScale(d.age))
+                .attr("cx", d => xScale(d.year))
+                .style("fill", d => colorScale(d.category));
+        }
 
         var xAxis = d3.svg.axis().scale(xScale).orient("bottom")
             .ticks(20)
@@ -174,6 +173,6 @@ function start() {
             .attr("y", 9)
             .attr("dy", ".35em")
             .style("text-anchor", "end")
-            .text(d => d)
+            .text(d => d);
     });
 }
