@@ -17,6 +17,10 @@ function start() {
     width = 1000 - margin.left - margin.right,
     height = 600 - margin.top - margin.bottom;
 
+    var divScatter = d3.select(graph).append("div")    
+            .attr("class", "scattertip")           
+            .style("opacity", 0);
+
     var svg = d3.select(container)
         .append('svg')
         .attr("id", "scatterSVG")
@@ -93,7 +97,7 @@ function start() {
 
             svg.selectAll("circle").remove();
 
-            svg.selectAll('dot')
+            var circ = svg.selectAll('dot')
                 .data(data)
                 .enter().append("circle")
                 .attr("class", "dot")
@@ -122,6 +126,20 @@ function start() {
                 .attr("cy", d => yScale(d.age))
                 .attr("cx", d => xScale(d.year))
                 .style("fill", d => colorScale(d.category));
+
+            circ.on("click", function(d) {
+                divScatter .transition()
+                    .duration(200)
+                    .style("opacity", .9);    
+                divScatter .html(d.fullname + "<br/>"  + "Year: " + d.year + "<br/>"  + "Age: " + d.age)
+                    .style("left", (d3.event.pageX) + "px")     
+                    .style("top", (d3.event.pageY - 28) + "px");    
+            })
+            .on("mouseout", function(d) {       
+                    divScatter.transition()        
+                        .duration(500)      
+                        .style("opacity", 0);
+                    });;
         }
 
         var xAxis = d3.svg.axis().scale(xScale).orient("bottom")
